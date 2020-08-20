@@ -93,7 +93,7 @@ const fi = (function() {
             }
             return newArr
         },
-        uniq: function(array, isSorted, callback) {
+        uniq: function(array, isSorted, iteratee = false) {
             let result = [];
             // console.log(isSorted);
             if (isSorted) {
@@ -108,6 +108,8 @@ const fi = (function() {
                         i--;
                     }
                 }
+            } else if (iteratee) {
+                return Array.from(new Set(collection));
             } else {
                 for (let i = 0; i < array.length; i++) {
                     if (!this.find(result, function(item) { return item === array[i] })) result.push(array[i]);
