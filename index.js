@@ -74,24 +74,24 @@ const fi = (function() {
             return result;
         },
         sortBy: function(array, callback) {
-            let newArr = [...array];
+            let newArr = array;
             return newArr.sort((a, b) => callback(a) - callback(b));
         },
         unpack: function(receiver, arr) {
             for (let val of arr)
                 receiver.push(val)
         },
-        flatten: function(arr, bool = false, newArr = []) {
-            let fiContext = this;
-            if (bool) {
-                for (let val of arr)
+        flatten: function(collection, shallow, newArr = []) {
+            if (!Array.isArray(collection)) return newArr.push(collection)
+            if (shallow) {
+                for (let val of collection)
                     Array.isArray(val) ? this.unpack(newArr, val) : newArr.push(val)
-                return newArr;
             } else {
-                return this.reduce(arr, function(flat, toFlatten) {
-                    return flat.concat(flat, Array.isArray(toFlatten) ? fiContext.flatten(toFlatten) : toFlatten);
-                }, []);
+                for (let val of collection) {
+                    this.flatten(val, false, newArr)
+                }
             }
+            return newArr
         },
         uniq: function(array, isSorted, callback) {
             let result = [];
@@ -145,12 +145,11 @@ fi.libraryMethod()
     // var stooges = [{ name: 'moe', age: 40 }, { name: 'larry', age: 50 }, { name: 'curly', age: 60 }];
     // fi.sortBy(stooges, function(stooge) { return stooge.name })
 console.log(
-    fi.flatten([
-        [1],
-        [2],
-        [3],
-        [2, 3, [2]]
-    ], true)
+    fi.flatten([1, [2, 3],
+        [
+            [4, 5], 6, [7, [8, 9]]
+        ]
+    ])
 );
 
 // let unpack = function(receiver = [], arr) {
