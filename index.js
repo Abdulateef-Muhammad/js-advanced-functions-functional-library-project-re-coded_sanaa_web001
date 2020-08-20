@@ -93,30 +93,33 @@ const fi = (function() {
             }
             return newArr
         },
-        uniq: function(array, isSorted, iteratee = false) {
-            let result = [];
-            // console.log(isSorted);
-            if (isSorted) {
-                // console.log(isSorted)
-                result = array;
-                for (let i = 0; i < result.length; i++) {
-                    console.log('result: ' + result);
-                    console.log('index: ' + i);
-                    console.log('item: ' + result[i])
-                    if (result[i] == result[i + 1]) {
-                        result.splice(i + 1, 1);
-                        i--;
-                    }
-                }
-            } else if (!iteratee) {
-                return Array.from(new Set(array));
-            } else {
-                for (let i = 0; i < array.length; i++) {
-                    if (!this.find(result, function(item) { return item === array[i] })) result.push(array[i]);
-                }
-            }
-            return result;
-        },
+        uniqSorted: function(collection, iteratee) {
+      const sorted = [collection[0]]
+      for (let idx = 1; idx < collection.length; idx++) {
+        if (sorted[idx-1] !== collection[idx])
+          sorted.push(collection[idx])
+      }
+      return sorted
+    },
+
+    uniq: function(collection, sorted=false, iteratee=false) {
+      if (sorted) {
+        return fi.uniqSorted(collection, iteratee)
+      } else if (!iteratee) {
+        return Array.from(new Set(collection))
+      } else {
+        const modifiedVals = new Set()
+        const uniqVals = new Set()
+        for (let val of collection) {
+          const moddedVal = iteratee(val)
+          if (!modifiedVals.has(moddedVal)) {
+            modifiedVals.add(moddedVal)
+            uniqVals.add(val)
+          }
+        }
+        return Array.from(uniqVals)
+      }
+    },
         keys: function(obj) {
             let result = [];
             for (const key in obj) {
