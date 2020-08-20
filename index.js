@@ -108,7 +108,7 @@ const fi = (function() {
                         i--;
                     }
                 }
-            } else if (iteratee) {
+            } else if (!iteratee) {
                 return Array.from(new Set(array));
             } else {
                 for (let i = 0; i < array.length; i++) {
@@ -147,11 +147,7 @@ fi.libraryMethod()
     // var stooges = [{ name: 'moe', age: 40 }, { name: 'larry', age: 50 }, { name: 'curly', age: 60 }];
     // fi.sortBy(stooges, function(stooge) { return stooge.name })
 console.log(
-    fi.flatten([1, [2, 3],
-        [
-            [4, 5], 6, [7, [8, 9]]
-        ]
-    ])
+    fi.uniq([1, 2, 2, 3, 4, 6, 9], false, (val => val % 3))
 );
 
 // let unpack = function(receiver = [], arr) {
