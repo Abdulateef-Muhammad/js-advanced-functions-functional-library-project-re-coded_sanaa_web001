@@ -74,22 +74,23 @@ const fi = (function() {
             return result;
         },
         sortBy: function(array, callback) {
-          let newArray = [...array]
-            return newArray.sort(function(a, b){
-              return callback(a) - callback(b);
-            });
+            return array.sort((a, b) => callback(a) - callback(b));
         },
-        flatten: function(arr, bool = false) {
+        unpack: function(receiver, arr) {
+            for (let val of arr)
+                receiver.push(val)
+        },
+        flatten: function(arr, bool = false, newArr = []) {
             let fiContext = this;
-            if(bool) {
-              return this.map(arr, function (item) {
-                return item.concat([], item);
-              });
+            if (bool) {
+                for (let val of arr)
+                    Array.isArray(val) ? this.unpack(newArr, val) : newArr.push(val)
+                return newArr;
             } else {
-            return this.reduce(arr, function(flat, toFlatten) {
-                return flat.concat(flat, Array.isArray(toFlatten) ? fiContext.flatten(toFlatten) : toFlatten);
-            }, []);
-          }
+                return this.reduce(arr, function(flat, toFlatten) {
+                    return flat.concat(flat, Array.isArray(toFlatten) ? fiContext.flatten(toFlatten) : toFlatten);
+                }, []);
+            }
         },
         uniq: function(array, isSorted, callback) {
             let result = [];
@@ -143,5 +144,23 @@ fi.libraryMethod()
     // var stooges = [{ name: 'moe', age: 40 }, { name: 'larry', age: 50 }, { name: 'curly', age: 60 }];
     // fi.sortBy(stooges, function(stooge) { return stooge.name })
 console.log(
-    fi.functions(fi)
+    fi.flatten([
+        [1],
+        [2],
+        [3],
+        [2, 3, [2]]
+    ], true)
 );
+
+// let unpack = function(receiver = [], arr) {
+//     for (let val of arr)
+//         receiver.push(val)
+//     return receiver
+// }
+// let unpacked = unpack([], [
+//     [1],
+//     [2],
+//     [3],
+//     [2, 3, [2]]
+// ]);
+// console.log(unpacked)
