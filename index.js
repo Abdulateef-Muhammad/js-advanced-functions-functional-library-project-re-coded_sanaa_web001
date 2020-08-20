@@ -74,7 +74,7 @@ const fi = (function() {
             return result;
         },
         sortBy: function(array, callback) {
-            let newArr = array;
+            let newArr = [...array];
             return newArr.sort((a, b) => callback(a) - callback(b));
         },
         unpack: function(receiver, arr) {
